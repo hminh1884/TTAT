@@ -1,176 +1,175 @@
 #include <stdio.h>
 #include <math.h>
+#define MAX 100
 
-void ktra(int a[], int n) {
-    for (int i = 0; i < n; i++) {
-        if(a[i]>1){
-        	a[i]=0;
+int bac;
+
+void nhap (int a[])
+{
+	int deg;
+	printf("Nhap bac cua da thuc: ");
+	scanf("%d", &deg);
+	printf("Nhap cac he so\n");
+	for(int i=deg; i>=0; i--)
+	{
+		printf("x^%d = ", i);
+		scanf("%d", &a[i]);
+	}	
+}
+
+void xuat (int a[])
+{
+	printf("\nNghich dao cua da thuc a(x)\n");
+	for(int i=bac; i>=0; i--)
+	{
+		if(a[i] != 0)
+		{	
+			printf("x^%d", i);			
+			if(i!=0)
+			{
+				if(a[i-2] != 0 || a[i-1] != 0)
+				printf(" + ");	
+			}							
 		}
-		if(a[i]<0){
-			a[i]=-1*a[i];
+	}
+	printf("\n");	
+}
+
+void KhoiTao (int a[], int x)
+{
+	for(int i=0; i<=bac*2; i++)
+		a[i] = x;
+}
+
+void CapNhat (int x[], int y[])
+{
+	for(int i=0; i<=bac; i++)
+		x[i] = y[i];
+}
+
+void chia (int x[], int y[], int nguyen[], int du[])
+{		
+	KhoiTao(nguyen, 0);
+	KhoiTao(du, 0);	
+    for(int i=0; i<=bac*2; i++)
+    	du[i] = x[i];
+    int deg_x = bac;
+	int deg_y = bac;		
+	while(x[deg_x] == 0)
+		deg_x--;
+	while(y[deg_y] == 0)
+		deg_y--;
+    while(deg_x >= deg_y)
+    {
+    	int deg_ng = deg_x - deg_y;
+    	nguyen[deg_ng] = 1;
+    	for(int i=deg_y; i>=0; i--)
+    	{
+    		if(y[i] == 1)
+    			du[i + deg_ng] = (du[i + deg_ng] + 1) % 2;
 		}
-        }
+		while(du[deg_x] == 0)
+			deg_x--;
+	}
 }
 
-
-void gan(int A[], int B[], int n,int m) {
-    for (int i = 0; i < n; i++) {
-        A[i] = B[i];
-    }
-    for (int i = n; i < m; i++) {
-        A[i] = 0; 
-    }
+void nhan (int x[], int y[], int kq[])
+{	
+	int deg_x = bac;
+	int deg_y = bac;		
+	while(x[deg_x] == 0)
+		deg_x--;
+	while(y[deg_y] == 0)
+		deg_y--;
+    KhoiTao(kq, 0);
+    while(deg_y >= 0)
+    {
+    	if(y[deg_y] != 0)
+    	{
+    		for(int i=deg_x; i>=0; i--)
+    		{
+    			if(x[i] == 1)
+    				kq[i + deg_y] = (kq[i + deg_y] + 1) % 2;
+			}
+		}
+		deg_y--;
+	}
 }
 
-
-int xet(int b[], int n) {
-    int s = 0;
-    for (int i = 0; i < n; i++) {
-        if(b[i]!=0) s+=b[i];;
-    }
-    return s;
+int max (int a, int b)
+{
+	return a>b ? a:b;
 }
 
-
-int dodai(int a[], int n) {
-    int m = 0;
-    for (int i = n - 1; i >= 0; i--) {
-        if (a[i] != 0) {
-            m = i + 1;
-            break;
-        }
-    }
-    return m;
+void cong (int x[], int y[], int kq[])
+{	
+	int deg_x = bac;
+	int deg_y = bac;		
+	while(x[deg_x] == 0)
+		deg_x--;
+	while(y[deg_y] == 0)
+		deg_y--;
+	int deg_kq = max (deg_x, deg_y);		
+	while(deg_kq >= 0)
+	{
+		kq[deg_kq] = (x[deg_kq] + y[deg_kq]) % 2;
+		deg_kq--;
+	}
 }
 
-
-void tru(int A[], int B[], int C[], int n) {
-    for (int i = 0; i < n; i++) {
-        C[i] = A[i] ^ B[i]; 
-    }
+int test (int a[])
+{
+	for(int i=bac; i>=0; i--)
+	{
+		if(a[i] == 1)
+			return 1;
+	}
+	return 0;
 }
 
+int main()
+{
+	printf("Nhap bac cua truong: ");
+	scanf("%d", &bac);
+	
+	int q[MAX], r[MAX];
+	int a[MAX], b[MAX], x[MAX], y[MAX];
+	KhoiTao(a, 0);
+	KhoiTao(b, 0);
+	KhoiTao(x, 0);
+	KhoiTao(y, 0);
+	printf("Nhap da thuc a(x)\n");	
+	nhap(a);
+	printf("Nhap da thuc g(x)\n");
+	nhap(b);
+	
+	int x1[MAX], x2[MAX], y1[MAX], y2[MAX];
+	KhoiTao(x1, 0);
+	KhoiTao(x2, 0);
+	KhoiTao(y1, 0);
+	KhoiTao(y2, 0);
+	x2[0] = 1;
+	y1[0] = 1;
+	
+	while(test(b) != 0)
+	{	
+		chia (a, b, q, r); 	// q = [a/b], r = a-q*b
+				
+		nhan (q, x1, x); 	// x = q*x1		
+		cong (x, x2, x); 	// x = x2 - x
+				
+		nhan (q, y1, y); 	// y = q*y1	
+		cong (y, y2, y); 	// y = y2 - y
+				
+		CapNhat (x2, x1); 	// x2 = x1	
+		CapNhat (x1, x); 	// x1 = x		
+		CapNhat (y2, y1); 	// y2 = y1		
+		CapNhat (y1, y); 	// y1 = y
+		
+		CapNhat (a, b); 	// a = b
+		CapNhat (b, r); 	// b = r
+	}
+	xuat (x2);
 
-void nhan(int A[], int B[], int m, int n, int temp[]) {
-    for (int i = 0; i < m + n - 1; i++) {
-        temp[i] = 0;
-    }
-    for (int i = 0; i < m; i++) {
-        for (int j = 0; j < n; j++) {
-            temp[i + j] += A[i] * B[j]; 
-        }
-    }
-}
-
-
-void chia(int a[], int b[], int m, int n, int q[], int r[]) {
-    
-    for (int i = 0; i < m; i++) {
-        r[i] = a[i];
-    }
-
-    
-    for (int i = 0; i < m - n + 1; i++) {
-        q[i] = 0;
-    }
-
-    for (int i = m - 1; i >= n - 1; i--) {
-        q[i - n + 1] = r[i] / b[n - 1];
-        for (int j = 0; j < n; j++) {
-            r[i - j] -= q[i - n + 1] * b[n - 1 - j];
-        }
-    }
-}
-
- 
-void print(int a[], int n) {
-    for (int i = 0; i < n; i++) {
-        if (a[i] != 0) {
-            printf("%dx^%d", a[i], i);
-            if (i != n - 1) {
-                printf(" + ");
-            }
-        }
-    }
-    printf("\n");
-}
-
-int main() {
-    int a[4] = {1, 1, 0, 1}; 
-    int b[3] = {1, 1, 1};    
-    int x[4] = {0,0,0,0}, y[4] = {0,0,0,0}, x1[4] = {0,0,0,0}, x2[4] = {1,0,0,0}, y1[4] = {1,0,0,0}, y2[4] = {0,0,0,0};
-    int B = 7;
-    int q[4];
-        int r[4];
-        int i=1;
-    while (B>0) {
-    	printf("lap lan thu %d:\n",i);
-        int m=dodai(a,4);
-        int n=dodai(b,3);
-        printf("(%d,%d)\n",m,n);
-        chia(a, b, m, n, q, r); 
-        ktra(q, m - n + 1);
-        ktra(r, m);
-        printf("q:");
-         print(q, m-n+1); 
-         printf("r:");
-         print(r, m);
-        int dq = dodai(q, m - n + 1);
-        int dr = dodai(r, m);
-        
-        int dx1 = dodai(x1, 4);
-        printf("x:");
-        int temp[9];
-        nhan(q, x1, dq, dx1, temp);
-        ktra(temp, dq + dx1 - 1);
-	      
-        tru(x2, temp, x, dq+dx1-1); 
-        ktra(x,4);
-         print(x, 4); 
-        int dy1 = dodai(y1, 4);
-        nhan(q, y1, dq, dy1, temp); 
-        ktra(temp, dq + dy1 - 1);
-        tru(y2, temp, y, dq+dy1-1); 
-        int dy=dodai(y,4);
-        ktra(y,dy);
-        printf("y:");
-        print(y, dy);  
-        
-        gan(a, b, n,m); 
-        printf("a:");
-        print(a, m); 
-        
-        gan(b, r, dr,n); 
-        printf("b:");
-          print(b, n); 
-          
-        gan(x2, x1, 4,4); 
-        printf("x2:");
-        int dx2=dodai(x2,4);
-        print(x2, dx2); 
-        
-        gan(x1, x, 4,4);  
-        printf("x1:");
-        dx1=dodai(x1,4);
-        print(x1, 4); 
-    
-        gan(y2, y1,4,4);
-		printf("y2:"); 
-        print(y2, 4); 
-
-        gan(y1, y, 4,4); 
-		printf("y1:"); 
-        print(y1, 4); 
-        
-        printf("b:");
-        B=xet(b,n); 
-        printf("%d\n",B);
-        i++;
-
-    }
-
-    printf("Da thuc nghich dao:\n");
-    print(y2, 4); 
-
-    return 0;
+	return 0;
 }
