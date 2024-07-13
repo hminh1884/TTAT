@@ -1,35 +1,47 @@
-#include <stdio.h>
-#include <stdbool.h>
-
-void sieveOfEratosthenes(int N) {
-    bool prime[N+1];
-    for (int i = 0; i <= N; i++) {
-        prime[i] = true;
-    }
-
-    prime[0] = false;
-    prime[1] = false;
-
-    for (int p = 2; p * p <= N; p++) {
-        if (prime[p] == true) {
-            for (int i = p * p; i <= N; i += p) {
-                prime[i] = false;
+#include<stdio.h>
+#include<math.h>
+int main()
+{
+    int x,n;
+    printf("Nhap x: "); scanf("%d",&x);
+    for(n=4;n<=x;n++)
+    {
+        int m,i,j,dem,a[10],b[10], permission=0;
+        j=0;
+        int check=1;
+  //      printf("\nNhap n: ");   scanf("%d",&n);
+        m=n;
+        for(i=2;i<=m;i++)
+        {
+            dem=0;
+            while((m%i)==0)
+            {
+                m/=i;
+                dem++;
+            }
+            if(dem>=1)
+            {
+                a[j]=i;
+                b[j]=dem;
+                if (b[j]>=2) check = 0;
+                j++;
             }
         }
-    }
-
-    for (int p = 2; p <= N; p++) {
-        if (prime[p]) {
-            printf("%d ", p);
+        if ((check==0)|(j<3))
+        {
+            
+            permission=1;
         }
+        for(i=0;i<=j-1;i++)
+        {
+        if (((n%a[i])==0)&&((n-1)%(a[i]-1)!=0))
+            {
+              
+                permission=1;
+            }
+        else if ((n%a[i])==0&&((n-1)%(a[i]-1)==0)&&check!=0&&permission!=1)
+            permission =0;
+        }
+        if (permission==0&&check!=0) printf(" %d ",n);
     }
-    printf("\n");
-}
-
-int main() {
-    int N;
-    printf("Nhap N: ");
-    scanf("%d", &N);
-    sieveOfEratosthenes(N);
-    return 0;
 }
